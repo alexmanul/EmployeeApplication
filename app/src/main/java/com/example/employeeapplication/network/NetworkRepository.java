@@ -1,7 +1,7 @@
-package com.example.testapp.network;
+package com.example.employeeapplication.network;
 
-import com.example.testapp.model.Employee;
-import com.example.testapp.network.api.EmployeeAPI;
+import com.example.employeeapplication.model.Employee;
+import com.example.employeeapplication.network.api.EmployeeAPI;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -15,6 +15,7 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NetworkRepository {
 
@@ -23,7 +24,7 @@ public class NetworkRepository {
     public NetworkRepository() {
         retrofit = new Retrofit.Builder()
                 .baseUrl("https://dummy.restapiexample.com/")
-//                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(new OkHttpClient())
                 .build();

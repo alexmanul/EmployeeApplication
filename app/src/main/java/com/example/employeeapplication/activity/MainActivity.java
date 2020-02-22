@@ -1,4 +1,4 @@
-package com.example.testapp.activity;
+package com.example.employeeapplication.activity;
 
 import android.os.Bundle;
 
@@ -7,9 +7,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.testapp.R;
-import com.example.testapp.adapter.EmployeeAdapter;
-import com.example.testapp.network.NetworkRepository;
+import com.example.employeeapplication.R;
+import com.example.employeeapplication.adapter.EmployeeAdapter;
+import com.example.employeeapplication.network.NetworkRepository;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
