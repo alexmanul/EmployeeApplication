@@ -4,9 +4,12 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.testapp.R;
+import com.example.testapp.adapter.EmployeeAdapter;
+import com.example.testapp.network.NetworkRepository;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -14,7 +17,7 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.recycler_view)
-    RecyclerView recyclerView;
+    RecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,5 +28,15 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        NetworkRepository networkRepository = new NetworkRepository();
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+        EmployeeAdapter adapter = new EmployeeAdapter(this, networkRepository.getEmployees());
+        mRecyclerView.setAdapter(adapter);
     }
 }
