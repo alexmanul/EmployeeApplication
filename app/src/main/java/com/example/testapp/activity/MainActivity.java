@@ -36,7 +36,9 @@ public class MainActivity extends AppCompatActivity {
 
         NetworkRepository networkRepository = new NetworkRepository();
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
-        EmployeeAdapter adapter = new EmployeeAdapter(this, networkRepository.getEmployees());
-        mRecyclerView.setAdapter(adapter);
+        networkRepository.getEmployees().subscribe(employees -> {
+            EmployeeAdapter adapter = new EmployeeAdapter(this, employees);
+            mRecyclerView.setAdapter(adapter);
+        });
     }
 }
