@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -26,8 +27,8 @@ public class NetworkRepository {
     }
 
     public List<Employee> getEmployees() {
-        JsonElement element = retrofit.create(EmployeeAPI.class).getEmployees();
-        return parse(element);
+        Response<JsonElement> element = retrofit.create(EmployeeAPI.class).getEmployees();
+        return parse(element.body());
     }
 
     private List<Employee> parse(JsonElement json) {

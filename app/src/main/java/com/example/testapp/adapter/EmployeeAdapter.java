@@ -48,8 +48,10 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ItemVi
     }
 
     class ItemViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.iv_photo) ImageView mPhoto;
-        @BindView(R.id.tv_name) TextView mName;
+        @BindView(R.id.iv_photo)
+        ImageView mPhoto;
+        @BindView(R.id.tv_name)
+        TextView mName;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
