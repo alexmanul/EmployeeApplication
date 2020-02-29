@@ -24,6 +24,7 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ItemVi
     private Context mContext;
     private List<Employee> mEmployees;
     private LayoutInflater mInflater;
+    private OnItemClick mListener;
 
     public EmployeeAdapter(Context context, List<Employee> employees) {
         mContext = context;
@@ -45,6 +46,11 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ItemVi
     @Override
     public int getItemCount() {
         return mEmployees.size();
+    }
+
+
+    public interface OnItemClick {
+        void onClick(Employee employee);
     }
 
     class ItemViewHolder extends RecyclerView.ViewHolder {
