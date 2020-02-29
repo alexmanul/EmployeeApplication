@@ -1,6 +1,7 @@
 package com.example.employeeapplication.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +14,8 @@ import com.example.employeeapplication.adapter.EmployeeAdapter;
 import com.example.employeeapplication.db.EmployeeDatabase;
 import com.example.employeeapplication.model.Employee;
 import com.example.employeeapplication.network.NetworkRepository;
+
+import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,12 +62,20 @@ public class MainActivity extends AppCompatActivity {
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe();
                             EmployeeAdapter adapter = new EmployeeAdapter(this, networkEmployees);
+                            adapter.setOnItemClickListener(this::startDetailsActivity);
                             mRecyclerView.setAdapter(adapter);
                         });
                     } else {
                         EmployeeAdapter adapter = new EmployeeAdapter(this, databaseEmployees);
+                        adapter.setOnItemClickListener(this::startDetailsActivity);
                         mRecyclerView.setAdapter(adapter);
                     }
                 });
+    }
+
+    private void startDetailsActivity(Employee employee) {
+        Intent intent = new Intent(this, EmployeeDetailsActivity.class);
+        intent.putExtra(EmployeeDetailsActivity.EXTRA_EMPLOYEE, Parcels.wrap(employee));
+        startActivity(intent);
     }
 }

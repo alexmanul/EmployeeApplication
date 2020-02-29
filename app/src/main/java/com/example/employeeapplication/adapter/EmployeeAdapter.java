@@ -18,6 +18,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ItemViewHolder> {
 
@@ -48,6 +49,9 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ItemVi
         return mEmployees.size();
     }
 
+    public void setOnItemClickListener(OnItemClick listener) {
+        mListener = listener;
+    }
 
     public interface OnItemClick {
         void onClick(Employee employee);
@@ -62,6 +66,11 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ItemVi
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+
+        @OnClick
+        void onClick() {
+            if (mListener != null) mListener.onClick(mEmployees.get(getAdapterPosition()));
         }
 
         void setup(Employee employee) {
