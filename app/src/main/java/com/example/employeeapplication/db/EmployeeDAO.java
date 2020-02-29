@@ -17,7 +17,10 @@ import io.reactivex.Observable;
 public interface EmployeeDAO {
 
     @Insert
-    Completable addEmployees(Employee... employees);
+    Completable addEmployee(Employee employee);
+
+    @Insert
+    Completable addEmployees(Employee[] employees);
 
     @Query("SELECT * FROM employee")
     Observable<List<Employee>> getAllEmployees();

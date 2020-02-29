@@ -1,5 +1,6 @@
 package com.example.employeeapplication.activity;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,6 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.employeeapplication.R;
 import com.example.employeeapplication.adapter.EmployeeAdapter;
+import com.example.employeeapplication.db.EmployeeDatabase;
+import com.example.employeeapplication.model.Employee;
 import com.example.employeeapplication.network.NetworkRepository;
 
 import butterknife.BindView;
@@ -30,15 +33,32 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
+    @SuppressLint("CheckResult")
     @Override
     protected void onStart() {
         super.onStart();
 
         NetworkRepository networkRepository = new NetworkRepository();
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
-        networkRepository.getEmployees().subscribe(employees -> {
-            EmployeeAdapter adapter = new EmployeeAdapter(this, employees);
-            mRecyclerView.setAdapter(adapter);
-        });
+        EmployeeDatabase
+                .getInstance(this)
+                .employeeDAO()
+                .getAllEmployees()
+                .subscribe(databaseEmployees -> {
+                    if (databaseEmployees.isEmpty()) {
+                        networkRepository.getEmployees().subscribe(networkEmployees -> {
+                            EmployeeDatabase
+                                    .getInstance(this)
+                                    .employeeDAO()
+                                    .addEmployees(networkEmployees.toArray(new Employee[]{}))
+                                    .subscribe();
+                            EmployeeAdapter adapter = new EmployeeAdapter(this, networkEmployees);
+                            mRecyclerView.setAdapter(adapter);
+                        });
+                    } else {
+                        EmployeeAdapter adapter = new EmployeeAdapter(this, databaseEmployees);
+                        mRecyclerView.setAdapter(adapter);
+                    }
+                });
     }
 }

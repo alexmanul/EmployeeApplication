@@ -16,7 +16,7 @@ public abstract class EmployeeDatabase extends RoomDatabase {
 
     private static EmployeeDatabase sInstance;
 
-    private static EmployeeDatabase getInstance(Context context) {
+    public static EmployeeDatabase getInstance(Context context) {
         if (sInstance == null) {
             sInstance = Room.databaseBuilder(context, EmployeeDatabase.class, DB_NAME).build();
         }
