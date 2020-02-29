@@ -1,5 +1,7 @@
 package com.example.employeeapplication.activity;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,10 +11,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.employeeapplication.R;
 import com.example.employeeapplication.adapter.EmployeeAdapter;
+import com.example.employeeapplication.db.EmployeeDatabase;
+import com.example.employeeapplication.model.Employee;
 import com.example.employeeapplication.network.NetworkRepository;
+
+import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,15 +38,44 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
+    @SuppressLint("CheckResult")
     @Override
     protected void onStart() {
         super.onStart();
 
         NetworkRepository networkRepository = new NetworkRepository();
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
-        networkRepository.getEmployees().subscribe(employees -> {
-            EmployeeAdapter adapter = new EmployeeAdapter(this, employees);
-            mRecyclerView.setAdapter(adapter);
-        });
+        EmployeeDatabase
+                .getInstance(this)
+                .employeeDAO()
+                .getAllEmployees()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(databaseEmployees -> {
+                    if (databaseEmployees.isEmpty()) {
+                        networkRepository.getEmployees().subscribe(networkEmployees -> {
+                            EmployeeDatabase
+                                    .getInstance(this)
+                                    .employeeDAO()
+                                    .addEmployees(networkEmployees.toArray(new Employee[]{}))
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe();
+                            EmployeeAdapter adapter = new EmployeeAdapter(this, networkEmployees);
+                            adapter.setOnItemClickListener(this::startDetailsActivity);
+                            mRecyclerView.setAdapter(adapter);
+                        });
+                    } else {
+                        EmployeeAdapter adapter = new EmployeeAdapter(this, databaseEmployees);
+                        adapter.setOnItemClickListener(this::startDetailsActivity);
+                        mRecyclerView.setAdapter(adapter);
+                    }
+                });
+    }
+
+    private void startDetailsActivity(Employee employee) {
+        Intent intent = new Intent(this, EmployeeDetailsActivity.class);
+        intent.putExtra(EmployeeDetailsActivity.EXTRA_EMPLOYEE, Parcels.wrap(employee));
+        startActivity(intent);
     }
 }
