@@ -16,6 +16,8 @@ import com.example.employeeapplication.network.NetworkRepository;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
                 .getInstance(this)
                 .employeeDAO()
                 .getAllEmployees()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(databaseEmployees -> {
                     if (databaseEmployees.isEmpty()) {
                         networkRepository.getEmployees().subscribe(networkEmployees -> {
@@ -51,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
                                     .getInstance(this)
                                     .employeeDAO()
                                     .addEmployees(networkEmployees.toArray(new Employee[]{}))
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe();
                             EmployeeAdapter adapter = new EmployeeAdapter(this, networkEmployees);
                             mRecyclerView.setAdapter(adapter);
